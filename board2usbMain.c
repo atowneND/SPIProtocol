@@ -50,7 +50,7 @@ int main(void) {
     int foo = 0;
     unsigned char mystr;
     int ctr = 0;
-    while(1)
+    while(ctr<100)
     {
         ctr = ctr + 1;
         if (foo==0){mystr='0';}
@@ -78,6 +78,7 @@ int main(void) {
 
     putu('z');
     LCD_char('z');
+    putu(EOF);
     return (EXIT_SUCCESS);
 }
 
