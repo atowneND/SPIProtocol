@@ -68,7 +68,7 @@ int main(void) {
         }
 
         set_output_device(2);
-        putu(mystr);
+        putu((char)(100+foo));
 
         set_output_device(1);
         LCD_char((char)(100+foo));
