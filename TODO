@@ -1,0 +1,6 @@
+- [x] convert int to char
+- [ ] use UART6, not canned functions
+- [ ] get data from ADC
+    - [ ] truncate data
+    - [ ] convert to char
+    - [ ] send via UART
