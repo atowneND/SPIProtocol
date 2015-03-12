@@ -18,15 +18,19 @@
 void serial_init6(unsigned long rate);
 char getu6();
 void putu6(char output);
+int xmitText(void);
 
 
 int main(void) {
+    xmitTest();
+    return (EXIT_SUCCESS);
+}
 
+int xmitTest(void){
     // initialize strings
     char* myname;
     char* helloworld;
     myname = "Ashley Towne";
-    helloworld = "Hello World!";
     serial_init(9600);
 
     // initialize LCD
@@ -39,8 +43,6 @@ int main(void) {
     LCD_setpos(0,0);
     printf("%s",myname);
     LCD_setpos(1,0);
-    printf("%s",helloworld);
-    LCD_setpos(2,0);
 
     // output to terminal
     set_output_device(1); // select UART as output device
@@ -50,7 +52,7 @@ int main(void) {
     int foo = 0;
     unsigned char mystr;
     int ctr = 0;
-    while(ctr<100)
+    while(ctr<10)
     {
         ctr = ctr + 1;
         if (foo==0){mystr='0';}
@@ -69,7 +71,6 @@ int main(void) {
 
         set_output_device(2);
         putu((char)(100+foo));
-
         set_output_device(1);
         LCD_char((char)(100+foo));
 
@@ -79,9 +80,8 @@ int main(void) {
     putu('z');
     LCD_char('z');
     putu(EOF);
-    return (EXIT_SUCCESS);
+    return 1;
 }
-
 
 void serial_init6(unsigned long rate){
     U6MODEbits.ON = 1;      //Enable UART6
