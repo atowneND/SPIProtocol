@@ -11,6 +11,7 @@
 
 #include "SDlib.h"
 #include "configbitsrev2014vC.h"
+#include "SPIConstants.h"
 
 /*
  *
@@ -19,17 +20,129 @@ void serial_init6(unsigned long rate);
 char getu6();
 void putu6(char output);
 int xmitText(void);
-
+int initSPI2MasterPIC(void);
+int initSPIFlash(void);
+int write2SPI(int address);
+int readSPI(int address);
+int sendByte2SPI(int data);
 
 int main(void) {
     xmitTest();
+    LCD_clear();
+    LCD_setpos(0,0);
+    set_output_device(2);
+    printf("%lu",get_pb_clock());
+
+    int foo = initSPI2Master();
+    LCD_setpos(1,0);
+    printf("%i",foo);
+
+    foo = 1;
+    foo = initSPI2Master();
+    printf(" %i",foo);
+    
+    foo = 1;
+    foo = initSPIFlash();
+    printf(" %i",foo);
+
+    foo = 1;
+    LCD_setpos(2,0);
+    printf("foo=%i *** ",foo);
+    foo = sendByte2SPI(RDSR);
+    printf("0?=%i",foo);
+    
     return (EXIT_SUCCESS);
+}
+
+int sendByte2SPI(int data){
+    SPIREG_Buffer = data;
+    int regstat = SPIREG_Buffer;
+    return regstat;
+}
+
+int initSPI2Master(void){
+    int rData;
+
+    // reset
+    REG_Interrupt.SPI4EIE = 0; // (bit 8) disable error interrupt
+    REG_Interrupt.SPI4RXIE = 0; // (bit 9) disable receive interrupt
+    REG_Interrupt.SPI4TXIE = 0; // (bit 10) disable transmit interrupt
+    SPIREG_Control.ON = 0; // turn SPI off
+    SPIREG_Buffer = 0; // clear buffer
+    rData = SPIREG_Buffer; // clear receiving buffer
+
+    // interrupt settings
+    REG_Flag.SPI4EIF = 0; // (bit 8) clear error flag
+    REG_Flag.SPI4RXIF = 0; // (bit 9) clear receive flag
+    REG_Flag.SPI4TXIF = 0; // (bit 10) clear transmit flag
+    // add interrupt priority settings?
+
+    // setup
+    SPIREG_Baud_Rate = 0; // set BRG
+        // pb clock is now 10MHz -> 5MHz baud rate
+    SPIREG_Status.SPIROV = 0; // clear overflow
+    SPIREG_Control.MSTEN = 1; // set to master
+
+    // settings - data changes on clock's falling edge, takes data from rising edge
+    SPIREG_Control.CKE = 1; // data changes on clock edge from active to idle
+    SPIREG_Control.CKP = 0; // clock is active high
+    SPIREG_Control.SMP = 0; // take data in middle of cycle
+
+    // set to 16-bit data chunks
+    SPIREG_Control.MODE32 = 0;
+    SPIREG_Control.MODE16 = 1;
+
+    // set pins
+    REG_Analog_Digital = 0xFFFF; // sets all to digital
+        // needs to account for ADC (B:8,10,11,14 need to be digital)
+    REG_JTAG = 0; // disable JTAG on B10, B11, B12
+
+    // enable interrupts
+    REG_Interrupt.SPI4EIE = 1;
+    REG_Interrupt.SPI4RXIE = 1;
+    REG_Interrupt.SPI4TXIE = 1;
+    
+    // enable SPI operation
+    SPIREG_Control.ON = 1;
+
+    return rData; // should be zero
+}
+
+int initSPIFlash(void){
+
+    // initialize settings - set AAI to zero
+    // clear all
+        // write enable
+    int foo;
+    foo = sendByte2SPI(WREN);
+    LCD_setpos(3,0);printf("%i ",foo);
+    foo = sendByte2SPI(ERASE_ALL);
+    printf("%i ",foo);
+        // erase
+    return 0;
+}
+
+int write2SPI(int address){
+    // try AAI later if possible, to optimize speed
+    
+    // write enable
+    // check if memory needs to be erased; erase if necessary and  write-enable
+    // byte-program
+    // address (3 bytes)
+    // data (1 byte)
+    // write disable
+    return address;
+}
+int readSPI(int address){
+    // read enable
+    // address (3 bytes)
+    // dummy byte
+    return address;
 }
 
 int xmitTest(void){
     // initialize strings
     char* myname;
-    char* helloworld;
     myname = "Ashley Towne";
     serial_init(9600);
 
@@ -47,7 +160,7 @@ int xmitTest(void){
     // output to terminal
     set_output_device(1); // select UART as output device
     printf("This goes to terminal\n"); // write to the screen
-    printf("%s\n%s\n", myname, helloworld);
+    printf("%s\n", myname);
     // loop
     int foo = 0;
     unsigned char mystr;

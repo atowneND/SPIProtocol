@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>configbitsrev2014vC.h</itemPath>
       <itemPath>SDlib.h</itemPath>
+      <itemPath>SPIConstants.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
