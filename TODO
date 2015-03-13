@@ -5,3 +5,10 @@
     - [ ] convert to char
     - [ ] send via UART
 - [ ] flash memory
+    - [ ] initialize SPI flash properly - why does erasing the whole chip set
+      the status register to all ones?
+    - [ ] explore byte-write vs AAI
+- [ ] connect flash memory to ADC
+    - [ ] FIFO data structure for writing to SPI
+    - [ ] calculate timing of write and confirm we will have enough time
+      between samples to write two bytes
