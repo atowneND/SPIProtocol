@@ -1,0 +1,9 @@
+*.a
+*.o*
+*.elf
+*.hex
+*.map
+*.xml
+*.mk
+*.properties
+*.bash
