@@ -16,65 +16,66 @@
 /*
  *
  */
+// UART 6
 void serial_init6(unsigned long rate);
 char getu6();
 void putu6(char output);
+
+// transmit test - proof of concept
 int xmitText(void);
-int initSPI2MasterPIC(void);
-int initSPIFlash(void);
-int write2SPI(int address);
-int readSPI(int address);
-int sendByte2SPI(int data);
+
+// SPI stuff
+void initSPI2Master(void);
+unsigned short initSPIFlash(void);
+unsigned short write2SPI(int address[], int data);
+unsigned short readSPI(int address[]);
+unsigned short sendByte2SPI(int data);
 
 int main(void) {
+// test
     xmitTest();
     LCD_clear();
     LCD_setpos(0,0);
     set_output_device(2);
-    printf("%lu",get_pb_clock());
 
-    int foo = initSPI2Master();
+// initialize and print output
+    initSPI2Master();
+    unsigned short foo = initSPIFlash();
+    printf("%u",foo);
     LCD_setpos(1,0);
-    printf("%i",foo);
-
-    foo = 1;
-    foo = initSPI2Master();
-    printf(" %i",foo);
     
-    foo = 1;
-    foo = initSPIFlash();
-    printf(" %i",foo);
-
-    foo = 1;
-    LCD_setpos(2,0);
-    printf("foo=%i *** ",foo);
+// read status register
+    SPI_SCK = 0;
     foo = sendByte2SPI(RDSR);
-    printf("0?=%i",foo);
-    
+    SPI_SCK = 1;
+    printf("%u",foo);
+    int address[3];
+    address[1] = 0x00;address[2]=0x00;address[3]=0x00;
+    //address[1] = 0;address[2] = 0;address[3] = 0;
+    int data = 0x42;
+    // int data = 101;
+    foo = write2SPI(address,data);
+    printf("%u",foo);
+    LCD_setpos(2,0);
+    printf("foo=");
+    foo = readSPI(address);
+    printf("%u",foo);
     return (EXIT_SUCCESS);
 }
 
-int sendByte2SPI(int data){
-    SPIREG_Buffer = data;
-    int regstat = SPIREG_Buffer;
-    return regstat;
-}
-
-int initSPI2Master(void){
-    int rData;
+void initSPI2Master(void){
 
     // reset
-    REG_Interrupt.SPI4EIE = 0; // (bit 8) disable error interrupt
-    REG_Interrupt.SPI4RXIE = 0; // (bit 9) disable receive interrupt
-    REG_Interrupt.SPI4TXIE = 0; // (bit 10) disable transmit interrupt
+    REG_Interrupt.SPIEIE = 0; // (bit 8) disable error interrupt
+    REG_Interrupt.SPIRXIE = 0; // (bit 9) disable receive interrupt
+    REG_Interrupt.SPITXIE = 0; // (bit 10) disable transmit interrupt
     SPIREG_Control.ON = 0; // turn SPI off
     SPIREG_Buffer = 0; // clear buffer
-    rData = SPIREG_Buffer; // clear receiving buffer
 
     // interrupt settings
-    REG_Flag.SPI4EIF = 0; // (bit 8) clear error flag
-    REG_Flag.SPI4RXIF = 0; // (bit 9) clear receive flag
-    REG_Flag.SPI4TXIF = 0; // (bit 10) clear transmit flag
+    REG_Flag.SPIEIF = 0; // (bit 8) clear error flag
+    REG_Flag.SPIRXIF = 0; // (bit 9) clear receive flag
+    REG_Flag.SPITXIF = 0; // (bit 10) clear transmit flag
     // add interrupt priority settings?
 
     // setup
@@ -98,46 +99,102 @@ int initSPI2Master(void){
     REG_JTAG = 0; // disable JTAG on B10, B11, B12
 
     // enable interrupts
-    REG_Interrupt.SPI4EIE = 1;
-    REG_Interrupt.SPI4RXIE = 1;
-    REG_Interrupt.SPI4TXIE = 1;
+    REG_Interrupt.SPIEIE = 1;
+    REG_Interrupt.SPIRXIE = 1;
+    REG_Interrupt.SPITXIE = 1;
     
+    SPI_TRIS = 0; // set I/O
+    SPI_SCK = 1; // don't talk to the SPI right now
+
     // enable SPI operation
     SPIREG_Control.ON = 1;
-
-    return rData; // should be zero
 }
 
-int initSPIFlash(void){
+unsigned short sendByte2SPI(int data){
+// sends a single command to SPI - back end
+// waits for transmit buffer to be empty, sends data, waits for flag, waits for
+// return value (buffer register)
+    unsigned short regstat;
+
+    while(!SPIREG_Status.SPITBE); // active wait if transmit buffer is not empty
+    SPIREG_Buffer = data; // write data to buffer
+
+    while(!REG_Flag.SPIRXIF); // while the interrupt flag does not signal done
+    REG_Flag.SPIRXIF = 0; // clear flag
+    while(!SPIREG_Status.SPIRBF); // wait for buffer to be full
+    regstat = SPIREG_Buffer; // return buffer register
+    return regstat;
+}
+
+unsigned short initSPIFlash(void){
 
     // initialize settings - set AAI to zero
-    // clear all
-        // write enable
-    int foo;
-    foo = sendByte2SPI(WREN);
-    LCD_setpos(3,0);printf("%i ",foo);
-    foo = sendByte2SPI(ERASE_ALL);
-    printf("%i ",foo);
-        // erase
-    return 0;
+    unsigned short foo;
+    
+    SPI_SCK = 0;
+    foo = sendByte2SPI(WREN); // write enable
+    SPI_SCK = 1;
+    SPI_SCK = 0;
+    foo = sendByte2SPI(ERASE_ALL); // erase all
+    SPI_SCK = 1;
+    SPI_SCK = 0;
+    foo = sendByte2SPI(WRDI); // write disable
+    SPI_SCK = 1;
+    return foo;
 }
 
-int write2SPI(int address){
+unsigned short write2SPI(int address[], int data){
     // try AAI later if possible, to optimize speed
-    
+    unsigned short foo;
+    // SCK4 = 29/RB14
+    // B22/RF13,L6
+    // AN14/SCK4/U5TX/!U2RTSU2RTS/PMALH/PMA1/RB14
+
     // write enable
-    // check if memory needs to be erased; erase if necessary and  write-enable
+    SPI_SCK = 0;
+    foo = sendByte2SPI(WREN);
+    SPI_SCK = 1;
+    // CHECK if memory needs to be erased; erase if necessary and  write-enable
     // byte-program
+    SPI_SCK = 0;
+    foo = sendByte2SPI(BYTE_PROGRAM);
+    SPI_SCK = 1;
     // address (3 bytes)
+    SPI_SCK = 0;
+    foo = sendByte2SPI(address[1]);
+    foo = sendByte2SPI(address[2]);
+    foo = sendByte2SPI(address[3]);
+    SPI_SCK = 1;
     // data (1 byte)
+    SPI_SCK = 0;
+    foo = sendByte2SPI(data);
+    SPI_SCK = 1;
+    // wait for write
+    while(!SPIREG_Status.SPIBUSY);
     // write disable
-    return address;
+    SPI_SCK = 0;
+    foo = sendByte2SPI(WRDI);
+    SPI_SCK = 1;
+    return foo;
 }
-int readSPI(int address){
+
+unsigned short readSPI(int address[]){
     // read enable
+    unsigned short foo;
+    SPI_SCK = 0;
+    foo = sendByte2SPI(READ);
+    SPI_SCK = 1;
     // address (3 bytes)
+    SPI_SCK = 0;
+    foo = sendByte2SPI(address[1]);
+    foo = sendByte2SPI(address[2]);
+    foo = sendByte2SPI(address[3]);
+    SPI_SCK = 1;
     // dummy byte
-    return address;
+    SPI_SCK = 0;
+    foo = sendByte2SPI(0x00);
+    SPI_SCK = 1;
+    return foo;
 }
 
 int xmitTest(void){

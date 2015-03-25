@@ -12,3 +12,8 @@
     - [ ] FIFO data structure for writing to SPI
     - [ ] calculate timing of write and confirm we will have enough time
       between samples to write two bytes
+
+
+- [ ] drive clock low for commanding SPI, set back to high when done
+- [ ] check byte length of input
+- [ ] check SPI_TRIS 1/0 setting

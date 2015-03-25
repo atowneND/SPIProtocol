@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDlib.h>
-#include <configbitsrev2014vC.h>
+#include "SDlib.h"
+#include "configbitsrev2014vC.h"
 #include <xc.h>
 #include <math.h>
 
