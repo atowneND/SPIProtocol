@@ -27,9 +27,9 @@ int xmitText(void);
 // SPI stuff
 void initSPI2Master(void);
 unsigned short initSPIFlash(void);
-unsigned short write2SPI(int address[], int data);
-unsigned short readSPI(int address[]);
-unsigned short sendByte2SPI(int data);
+unsigned short write2SPI(unsigned short address[], unsigned short data);
+unsigned short readSPI(unsigned short address[]);
+unsigned short sendByte2SPI(unsigned short data);
 
 int main(void) {
 // test
@@ -40,7 +40,7 @@ int main(void) {
 
 // initialize and print output
     initSPI2Master();
-    unsigned short foo = initSPIFlash();
+    unsigned short foo = initSPIFlash(); // erase all
     printf("%u",foo);
     LCD_setpos(1,0);
     
@@ -49,11 +49,9 @@ int main(void) {
     foo = sendByte2SPI(RDSR);
     SPI_SCK = 1;
     printf("%u",foo);
-    int address[3];
+    unsigned short address[3];
     address[1] = 0x00;address[2]=0x00;address[3]=0x00;
-    //address[1] = 0;address[2] = 0;address[3] = 0;
-    int data = 0x42;
-    // int data = 101;
+    unsigned short data = 0x42;
     foo = write2SPI(address,data);
     printf("%u",foo);
     LCD_setpos(2,0);
@@ -110,7 +108,7 @@ void initSPI2Master(void){
     SPIREG_Control.ON = 1;
 }
 
-unsigned short sendByte2SPI(int data){
+unsigned short sendByte2SPI(unsigned short data){
 // sends a single command to SPI - back end
 // waits for transmit buffer to be empty, sends data, waits for flag, waits for
 // return value (buffer register)
@@ -143,7 +141,7 @@ unsigned short initSPIFlash(void){
     return foo;
 }
 
-unsigned short write2SPI(int address[], int data){
+unsigned short write2SPI(unsigned short address[], unsigned short data){
     // try AAI later if possible, to optimize speed
     unsigned short foo;
     // SCK4 = 29/RB14
@@ -153,46 +151,33 @@ unsigned short write2SPI(int address[], int data){
     // write enable
     SPI_SCK = 0;
     foo = sendByte2SPI(WREN);
-    SPI_SCK = 1;
     // CHECK if memory needs to be erased; erase if necessary and  write-enable
     // byte-program
-    SPI_SCK = 0;
     foo = sendByte2SPI(BYTE_PROGRAM);
-    SPI_SCK = 1;
     // address (3 bytes)
-    SPI_SCK = 0;
     foo = sendByte2SPI(address[1]);
     foo = sendByte2SPI(address[2]);
     foo = sendByte2SPI(address[3]);
-    SPI_SCK = 1;
     // data (1 byte)
-    SPI_SCK = 0;
     foo = sendByte2SPI(data);
     SPI_SCK = 1;
     // wait for write
-    while(!SPIREG_Status.SPIBUSY);
-    // write disable
-    SPI_SCK = 0;
-    foo = sendByte2SPI(WRDI);
-    SPI_SCK = 1;
+    while(SPIREG_Status.SPIBUSY);
     return foo;
 }
 
-unsigned short readSPI(int address[]){
+unsigned short readSPI(unsigned short address[]){
     // read enable
     unsigned short foo;
     SPI_SCK = 0;
     foo = sendByte2SPI(READ);
-    SPI_SCK = 1;
     // address (3 bytes)
-    SPI_SCK = 0;
     foo = sendByte2SPI(address[1]);
     foo = sendByte2SPI(address[2]);
     foo = sendByte2SPI(address[3]);
-    SPI_SCK = 1;
     // dummy byte
-    SPI_SCK = 0;
     foo = sendByte2SPI(0x00);
+    
     SPI_SCK = 1;
     return foo;
 }
