@@ -18,11 +18,18 @@ unsigned char SSR(unsigned char data);        //SPI send/receive function
  * 
  */
 int main() {
+    TRISE = 0;
+    LATE = 0;
     unsigned char num = 8;
     unsigned char output = 0;
     initialize();
-    output = SSR(num);
-    printf("output=%c",output);
+        output = SSR(num);
+//    LCD_init();
+//    LCD_clear();
+//    LCD_setpos(0,0);
+//    set_output_device(1);
+    printf("hi");
+//    printf("output=%c",output);
 }
 
 void initialize()

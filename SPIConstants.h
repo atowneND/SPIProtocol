@@ -12,6 +12,9 @@
 #define SPITXIF SPI4TXIF // REG_Flag.SPITXIF
 #define SPIRXIF SPI4RXIF // REG_Flag.SPIRXIF
 
+#define REG_IPC IPC8bits // interrupt priority register
+#define SPI_Priority SPI4IP // REG_IPC.SPI_Priority
+
 #define SPIREG_Control SPI4CONbits // spi control register
 #define SPIREG_Baud_Rate SPI4BRG // spi baud rate generator
 #define SPIREG_Status SPI4STATbits // spi status register
@@ -37,5 +40,7 @@
 #define WRSR 0x01 // write status register
 #define WREN 0x06 // write enable
 #define WRDI 0x04 // write disable
+#define RDID 0x90 // read device ID
+#define JEDECRDID 0x9F // JEDEC read device ID
 
 #endif
