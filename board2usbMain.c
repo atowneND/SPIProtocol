@@ -194,7 +194,6 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
     SPI_CE = 0;    
     foo = sendByte2SPI(WREN);
     SPI_CE = 1;
-    printStatReg();
     SPI_CE = 0;
     // CHECK if memory needs to be erased; erase if necessary and  write-enable
     // byte-program
@@ -208,13 +207,14 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
     SPI_CE = 1;
     SPI_CE = 0;
     // wait for write - check least significant bit of status register
-    foo = sendByte2SPI(RDSR);
-    int statReg = foo & 1;
+//    foo = sendByte2SPI(RDSR);
+//    int statReg = foo & 1;
+    int statReg = checkWIP();
     while(statReg){ // while busy
-        foo = sendByte2SPI(RDSR);
-        statReg = foo & 1;
+        statReg = checkWIP();
+//        foo = sendByte2SPI(RDSR);
+//        statReg = foo & 1;
     }
-    
     SPI_CE = 1;
     
     printStatReg();
