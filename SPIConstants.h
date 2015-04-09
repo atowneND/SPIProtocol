@@ -20,7 +20,7 @@
 #define SPIREG_Status SPI4STATbits // spi status register
 #define SPIREG_Buffer SPI4BUF // spi buffer register
 
-#define SPI_SCK LATBbits.LATB8 // sck4
+#define SPI_CE LATBbits.LATB8 // chip enable
 #define SPI_TRIS TRISB // set I/O
 
 #define REG_Analog_Digital AD1PCFG // set pins to be analog or digital

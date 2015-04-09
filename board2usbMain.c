@@ -26,14 +26,16 @@ int xmitText(void);
 
 // SPI stuff
 void initSPI2Master(void);
-unsigned char initSPIFlash(void);
+unsigned char eraseSPIFlash(void);
+void write2AllEnable(void);
 unsigned char write2SPI(unsigned char address[], unsigned char data);
 unsigned char readSPI(unsigned char address[]);
 unsigned char sendByte2SPI(unsigned char data);
 unsigned char readID(void);
+int checkWIP(void);
+void printStatReg(void);
 
 int main(void) {
-// test
     TRISE = 0;
     // trigger
     LATE = 255;
@@ -44,60 +46,48 @@ int main(void) {
     set_output_device(2);
 
 // initialize and print output
-    // high while initializing
     LATE = 255;
+   // write2AllEnable();
     initSPI2Master();
     LATE = 0;
     
     // high while erasing
     LATE = 255;
     unsigned char foo;
-   // unsigned char foo = initSPIFlash(); // erase all
-   // printf("0: %u",foo);
+    foo = eraseSPIFlash(); // erase all
     LCD_setpos(1,0);
     LATE = 0;
     
     // read device ID
-    // high while reading ID
     LATE = 255;
-    SPI_SCK = 0;
+    SPI_CE = 0;
     foo = readID();
-    SPI_SCK = 1;
+    SPI_CE = 1;
     LATE = 0;
-//    
-    printf("foo=%u",foo);
     
 // read status register
-    // high while reading status register
-    //LATE = 255;
-    //SPI_SCK = 0;    
-    //foo = sendByte2SPI(RDSR);
-    //SPI_SCK = 1;
-    //LATE = 0;
+    LATE = 255;
+    SPI_CE = 0;    
+    foo = sendByte2SPI(RDSR);
+    foo = sendByte2SPI(0);
+    SPI_CE = 1;
+    LATE = 0;
+
+    unsigned char address[2];
+    address[0] = 0x00;address[1]=0x00;address[2]=0x00;
+    unsigned char data = 'B';
     
-//    LCD_setpos(1,4);
-//    printf("2:");
-//    printf("%u",foo);
-//    unsigned char address[2];
-//    address[0] = 0x00;address[1]=0x00;address[2]=0x00;
-//    unsigned char data = 'B';
-//    
-//    // high while writing to SPI
-//    LATE = 255;
-//    foo = write2SPI(address,data);
-//    LATE = 0;
-//    printf("3:%u",foo);
-//    LCD_setpos(3,0);
-//    //printf("foo=");
-//    
-//    // high while reading from SPI
-//    LATE = 5;
-//    foo = readSPI(address);
-//    LATE = 0;
-//    //printf("4:%u",foo);
-//    LCD_setpos(4,5);
-//    printf("BRG=%i",SPIREG_Baud_Rate);
-//    // high for finished
+    // high while writing to SPI
+    LATE = 255;
+    foo = write2SPI(address,data);
+    LATE = 0;
+
+    // high while reading from SPI
+    LATE = 255;
+    foo = readSPI(address);
+    LATE = 0;
+
+    // high for finished
     LATE = 255;
     return (EXIT_SUCCESS);
 }
@@ -108,7 +98,7 @@ void initSPI2Master(void){
     REG_Interrupt.SPIEIE = 0; // (bit 8) disable error interrupt
     REG_Interrupt.SPIRXIE = 0; // (bit 9) disable receive interrupt
     REG_Interrupt.SPITXIE = 0; // (bit 10) disable transmit interrupt
-    SPIREG_Control.ON = 0; // turn SPI off
+    SPIREG_Control.ON = 0; // turn     //unsigned char foo = sendByte2SPI(RDID);SPI off
     SPIREG_Buffer = 0; // clear buffer
 
     // interrupt settings
@@ -143,7 +133,7 @@ void initSPI2Master(void){
     SPI_TRIS = 0; // set I/O
     TRISFbits.TRISF4 = 1;
     TRISFbits.TRISF5 = 0;
-    SPI_SCK = 1; // don't talk to the SPI right now
+    SPI_CE = 1; // don't talk to the SPI right now
     
     // enable SPI operation
     SPIREG_Control.ON = 1;
@@ -161,25 +151,39 @@ unsigned char sendByte2SPI(unsigned char data){
     REG_Flag.SPIRXIF = 0; // clear flag
     while(!SPIREG_Status.SPIRBF); // wait for buffer to be full
     regstat = SPIREG_Buffer; // return buffer register
-//    SPIREG_Buffer = 0;
+
     return regstat;
 }
 
-unsigned char initSPIFlash(void){
+unsigned char eraseSPIFlash(void){
 
     // initialize settings - set AAI to zero
     unsigned char foo;
     
-    SPI_SCK = 0;    
+    SPI_CE = 0;    
     foo = sendByte2SPI(WREN); // write enable
-    SPI_SCK = 1;    
-    SPI_SCK = 0;    
+    SPI_CE = 1;    
+    SPI_CE = 0;    
     foo = sendByte2SPI(ERASE_ALL); // erase all
-    SPI_SCK = 1;    
-//    SPI_SCK = 0;    
-//    foo = sendByte2SPI(WRDI); // write disable
-//    SPI_SCK = 1;    
+    SPI_CE = 1;
+   
     return foo;
+}
+
+void write2AllEnable(void){
+    SPI_CE = 0;
+    // enable write status register
+    int foo = sendByte2SPI(EWSR);
+    SPI_CE = 1;
+    SPI_CE = 0;
+    // write 0x00 to status register - chmod +w *
+    foo = sendByte2SPI(WRSR);
+    foo = sendByte2SPI(0x00);
+    SPI_CE = 1;
+    SPI_CE = 0;
+    // disable write
+    foo = sendByte2SPI(WRDI);
+    SPI_CE = 1;
 }
 
 unsigned char write2SPI(unsigned char address[], unsigned char data){
@@ -187,10 +191,11 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
     unsigned char foo;
 
     // write enable
-    SPI_SCK = 0;    
+    SPI_CE = 0;    
     foo = sendByte2SPI(WREN);
-    SPI_SCK = 1;
-    SPI_SCK = 0;
+    SPI_CE = 1;
+    printStatReg();
+    SPI_CE = 0;
     // CHECK if memory needs to be erased; erase if necessary and  write-enable
     // byte-program
     foo = sendByte2SPI(BYTE_PROGRAM);
@@ -200,28 +205,59 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
     foo = sendByte2SPI(address[2]);
     // data (1 byte)
     foo = sendByte2SPI(data);
-    SPI_SCK = 1;    
-    SPI_SCK = 0;
-    // wait for write
-    while(SPIREG_Status.SPIBUSY);
+    SPI_CE = 1;
+    SPI_CE = 0;
+    // wait for write - check least significant bit of status register
+    foo = sendByte2SPI(RDSR);
+    int statReg = foo & 1;
+    while(statReg){ // while busy
+        foo = sendByte2SPI(RDSR);
+        statReg = foo & 1;
+    }
+    
+    SPI_CE = 1;
+    
+    printStatReg();
+
     foo = SPIREG_Buffer;
-    SPI_SCK = 1;
     return foo;
+}
+
+int checkWIP(void){
+    char foo = sendByte2SPI(RDSR);
+    int statReg = foo & 1;
+    return statReg;
+}
+
+void printStatReg(void){
+    SPI_CE = 0;
+    char foo = sendByte2SPI(RDSR);
+    foo = sendByte2SPI(0);
+    SPI_CE = 1;
+    int i;
+    printf("SR:");
+    for (i=7;i>=0;i--){
+        printf("%i",(foo>>i)&1);
+    }
 }
 
 unsigned char readSPI(unsigned char address[]){
     // read enable
     unsigned char foo;
-    SPI_SCK = 0;    
+    SPI_CE = 0;    
     foo = sendByte2SPI(READ);
     // address (3 bytes)
     foo = sendByte2SPI(address[0]);
     foo = sendByte2SPI(address[1]);
     foo = sendByte2SPI(address[2]);
+    
     // dummy byte
     foo = sendByte2SPI(0x00);
+    foo = sendByte2SPI(0x00);
+    foo = sendByte2SPI(0x00);
+    foo = sendByte2SPI(0x00);
     
-    SPI_SCK = 1;    
+    SPI_CE = 1;    
     return foo;
 }
 
@@ -301,7 +337,6 @@ char getu6(){
             input = U6RXREG;         //Set input
             b = 1;                   //Exit loop
         }
-
     }
     return input;                    //Return input
 }
@@ -319,27 +354,12 @@ void putu6(char output){
 }
 
 unsigned char readID(void){
-//    printf("here");
     unsigned char foo2,foo3;
-    //unsigned char foo = sendByte2SPI(RDID);
     unsigned char foo = sendByte2SPI(JEDECRDID);
     
-    //sendByte2SPI(0); // zero
-    //sendByte2SPI(0); // zero
     foo = sendByte2SPI(0); // get BF first
-
-    //    SPI_SCK = 1;
     foo2 = sendByte2SPI(0); // expect BF return
-    LATEbits.LATE2 = 0;
     foo3 = sendByte2SPI(0); // expect device ID return
- //   LATE = foo;
-    //while(!SPIREG_Status.SPIRBF){
-    //while(SPIREG_Status.SPIBUSY){
-    //while(foo!=0){
-    //    foo = sendByte2SPI(0);
-    //    printf("b");
-    //}
- //   LCD_setpos(2,0);
- //   printf("F:%u.%u.%u.",foo,foo2,foo3);
+
     return foo;
 }
