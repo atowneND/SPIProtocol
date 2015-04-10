@@ -49,8 +49,7 @@ int main(void) {
     
     // read status register
     SPI_CE = 0;    
-    foo = sendByte2SPI(RDSR);
-    foo = sendByte2SPI(0);
+    printStatReg();
     SPI_CE = 1;
 
     unsigned char address[2];

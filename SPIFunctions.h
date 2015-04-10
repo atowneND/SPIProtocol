@@ -80,6 +80,7 @@ unsigned char eraseSPIFlash(void){
 }
 
 void write2AllEnable(void){
+    unsigned char newSRsettings = 0x00;
     SPI_CE = 0;
     // enable write status register
     int foo = sendByte2SPI(EWSR);
@@ -87,7 +88,7 @@ void write2AllEnable(void){
     SPI_CE = 0;
     // write 0x00 to status register - chmod +w *
     foo = sendByte2SPI(WRSR);
-    foo = sendByte2SPI(0x00);
+    foo = sendByte2SPI(newSRsettings);
     SPI_CE = 1;
     SPI_CE = 0;
     // disable write
@@ -115,9 +116,9 @@ unsigned char readID(void){
     unsigned char foo2,foo3;
     unsigned char foo = sendByte2SPI(JEDECRDID);
     
-    foo = sendByte2SPI(0); // get BF first
-    foo2 = sendByte2SPI(0); // expect BF return
-    foo3 = sendByte2SPI(0); // expect device ID return
+    foo = sendByte2SPI(0); // expect BF
+    foo2 = sendByte2SPI(0); // expect 25 return
+    foo3 = sendByte2SPI(0); // expect 41 return
 
     return foo;
 }
@@ -148,7 +149,6 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
         statReg = checkWIP();
     }
     SPI_CE = 1;
-    printStatReg();
 
     foo = SPIREG_Buffer;
     return foo;
