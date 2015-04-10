@@ -46,15 +46,14 @@ int main(void) {
 
     // initialize and print output
     LATE = 255;
-    // write2AllEnable();
     initSPI2Master();
+    write2AllEnable();
     LATE = 0;
     
     // high while erasing
     LATE = 255;
     unsigned char foo;
-    foo = eraseSPIFlash(); // erase all
-    LCD_setpos(1,0);
+    //foo = eraseSPIFlash(); // erase all
     LATE = 0;
     
     // read device ID
@@ -253,9 +252,6 @@ unsigned char readSPI(unsigned char address[]){
     foo = sendByte2SPI(address[2]);
     
     // dummy byte
-    foo = sendByte2SPI(0x00);
-    foo = sendByte2SPI(0x00);
-    foo = sendByte2SPI(0x00);
     foo = sendByte2SPI(0x00);
     
     SPI_CE = 1;    
