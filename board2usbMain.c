@@ -23,6 +23,7 @@ void putu6(char output);
 
 // transmit test - proof of concept
 int xmitText(void);
+void setLCDdefaults(void);
 
 // SPI stuff
 void initSPI2Master(void);
@@ -40,14 +41,12 @@ int main(void) {
     // trigger
     LATE = 255;
     LATE = 0;
-    xmitTest();
-    LCD_clear();
-    LCD_setpos(0,0);
-    set_output_device(2);
+    //xmitTest();
+    setLCDdefaults();
 
-// initialize and print output
+    // initialize and print output
     LATE = 255;
-   // write2AllEnable();
+    // write2AllEnable();
     initSPI2Master();
     LATE = 0;
     
@@ -90,6 +89,13 @@ int main(void) {
     // high for finished
     LATE = 255;
     return (EXIT_SUCCESS);
+}
+
+void setLCDdefaults(void){
+    LCD_init();
+    LCD_clear();
+    LCD_setpos(0,0);
+    set_output_device(2);
 }
 
 void initSPI2Master(void){
@@ -207,16 +213,11 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
     SPI_CE = 1;
     SPI_CE = 0;
     // wait for write - check least significant bit of status register
-//    foo = sendByte2SPI(RDSR);
-//    int statReg = foo & 1;
     int statReg = checkWIP();
     while(statReg){ // while busy
         statReg = checkWIP();
-//        foo = sendByte2SPI(RDSR);
-//        statReg = foo & 1;
     }
     SPI_CE = 1;
-    
     printStatReg();
 
     foo = SPIREG_Buffer;
