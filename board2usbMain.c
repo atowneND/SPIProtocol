@@ -33,11 +33,11 @@ int main(void) {
     LATE = 0;
     //xmitTest();
     setLCDdefaults();
-
+    printf("hi");
     // initialize and print output
     initSPI2Master();
     write2AllEnable();
-    
+
     // high while erasing
     unsigned char foo;
     //foo = eraseSPIFlash(); // erase all
@@ -46,20 +46,44 @@ int main(void) {
     SPI_CE = 0;
     foo = readID();
     SPI_CE = 1;
-    
+        
     // read status register
-    SPI_CE = 0;    
-    printStatReg();
-    SPI_CE = 1;
+    //SPI_CE = 0;    
+    //printStatReg();
+    //SPI_CE = 1;
 
     unsigned char address[2];
     address[0] = 0x00;address[1]=0x00;address[2]=0x00;
     unsigned char data = 'B';
     
     // write and read
+    printf("r/w");
     foo = write2SPI(address,data);
+    printf("0");
     foo = readSPI(address);
+    printf("1");
+    printf("%c",foo);
+    address[0] = address[0] + 1;
+    foo = write2SPI(address,data+1);
+    printf("2");
+    foo = readSPI(address);
+    printf("3");
+    printf("%c",foo);
+    address[0] = address[0] + 1;
 
+    unsigned int adcData = 0x6869;
+    unsigned char adcStr[2];
+    memcpy(adcStr,(char*)&adcData,2);
+
+    foo = write2SPI(address,adcStr[0]);
+    address[0] = address[0] + 1;
+    foo = write2SPI(address,adcStr[1]);
+    foo = readSPI(address-1);
+    unsigned char foo2 = readSPI(address);
+  //  LCD_clear();
+    LCD_setpos(0,0);
+    printf("%c%c",foo,foo2);
+    
     return (EXIT_SUCCESS);
 }
 

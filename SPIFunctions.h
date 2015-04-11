@@ -142,20 +142,20 @@ unsigned char write2SPI(unsigned char address[], unsigned char data){
     // data (1 byte)
     foo = sendByte2SPI(data);
     SPI_CE = 1;
-    SPI_CE = 0;
     // wait for write - check least significant bit of status register
     int statReg = checkWIP();
     while(statReg){ // while busy
         statReg = checkWIP();
     }
-    SPI_CE = 1;
 
     foo = SPIREG_Buffer;
     return foo;
 }
 
 int checkWIP(void){
+    SPI_CE = 0;
     char foo = sendByte2SPI(RDSR);
+    SPI_CE = 1;
     int statReg = foo & 1;
     return statReg;
 }
