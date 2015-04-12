@@ -44,6 +44,8 @@ void initSPI2Master(void){
     SPIREG_Control.CKE = 1; // data changes on clock edge from active to idle
     SPIREG_Control.CKP = 0; // clock is active high
     SPIREG_Control.SMP = 0; // take data in middle of cycle
+    SPI_HOLD = 1;
+    SPI_WP = 0; // set write protect to allow WRSR
 
     // set pins
     REG_Analog_Digital = 0xFFFF; // sets all to digital
@@ -115,11 +117,11 @@ unsigned char sendByte2SPI(unsigned char data){
 unsigned char readID(void){
     unsigned char foo2,foo3;
     unsigned char foo = sendByte2SPI(JEDECRDID);
-    
+    SPI_CE = 0;
     foo = sendByte2SPI(0); // expect BF
     foo2 = sendByte2SPI(0); // expect 25 return
     foo3 = sendByte2SPI(0); // expect 41 return
-
+    SPI_CE = 1;
     return foo;
 }
 
@@ -187,6 +189,7 @@ void printStatReg(void){
     for (i=7;i>=0;i--){
         printf("%i",(foo>>i)&1);
     }
+    printf("\n");
 }
 
 #endif

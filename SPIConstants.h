@@ -21,6 +21,8 @@
 #define SPIREG_Buffer SPI4BUF // spi buffer register
 
 #define SPI_CE LATBbits.LATB8 // chip enable
+#define SPI_WP LATBbits.LATB10 // write protect
+#define SPI_HOLD LATBbits.LATB12 // hold
 #define SPI_TRIS TRISB // set I/O
 
 #define REG_Analog_Digital AD1PCFG // set pins to be analog or digital

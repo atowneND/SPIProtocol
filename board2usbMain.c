@@ -33,24 +33,19 @@ int main(void) {
     LATE = 0;
     //xmitTest();
     setLCDdefaults();
-
     // initialize and print output
     initSPI2Master();
     write2AllEnable();
-    
+
     // high while erasing
     unsigned char foo;
     //foo = eraseSPIFlash(); // erase all
     
     // read device ID
-    SPI_CE = 0;
     foo = readID();
-    SPI_CE = 1;
     
-    // read status register
-    SPI_CE = 0;    
+    // read status register 
     printStatReg();
-    SPI_CE = 1;
 
     unsigned char address[2];
     address[0] = 0x00;address[1]=0x00;address[2]=0x00;
@@ -59,6 +54,7 @@ int main(void) {
     // write and read
     foo = write2SPI(address,data);
     foo = readSPI(address);
+    printf("foo=%c\n",foo);
 
     return (EXIT_SUCCESS);
 }
@@ -67,7 +63,7 @@ void setLCDdefaults(void){
     LCD_init();
     LCD_clear();
     LCD_setpos(0,0);
-    set_output_device(2);
+    set_output_device(1);
 }
 
 int xmitTest(void){
