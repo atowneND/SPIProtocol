@@ -7,12 +7,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "SDlib.h"
 #include "configbitsrev2014vC.h"
 #include "SPIConstants.h"
 #include "SPIFunctions.h"
+#include "A2DFunctions.h"
 
 /*
  *
@@ -31,7 +33,7 @@ int main(void) {
     // trigger
     LATE = 255;
     LATE = 0;
-    //xmitTest();
+    xmitTest();
     setLCDdefaults();
     // initialize and print output
     initSPI2Master();
@@ -55,6 +57,32 @@ int main(void) {
     foo = write2SPI(address,data);
     foo = readSPI(address);
     printf("foo=%c\n",foo);
+
+    
+    //////////////////////////////////////////////////
+    //TESTING A2D//
+    unsigned int inval = 0x4145;
+    set_output_device(1);
+    printf("inval = %i\n\tsize = %lu\n",inval,sizeof(inval));
+    init_ADC();
+    int ctr = 0;
+    address[0] = address[0] + 1;
+    char valStr[sizeof(inval)];
+ 
+    while(1){
+        inval = conv();
+        printf("%i\t",inval);
+//        for (ctr= 0; ctr<sizeof(inval); ctr++){
+//            foo = write2SPI(address,valStr[ctr]);
+//            foo = readSPI(address);
+//            printf("%i ",foo);
+//            address[0] = address[0] + 1;
+//        }
+//        printf("\n");
+        memcpy(valStr,(char*)&inval,sizeof(inval));
+        printf("valStr = %s\n",valStr);   
+        break;
+    }
 
     return (EXIT_SUCCESS);
 }
