@@ -1,19 +1,17 @@
-- [x] convert int to char
-- [ ] use UART6, not canned functions
-- [ ] get data from ADC
-    - [ ] truncate data
-    - [ ] convert to char
-    - [ ] send via UART
-- [ ] flash memory
-    - [ ] initialize SPI flash properly - why does erasing the whole chip set
-      the status register to all ones?
-    - [ ] explore byte-write vs AAI
-- [ ] connect flash memory to ADC
-    - [ ] FIFO data structure for writing to SPI
-    - [ ] calculate timing of write and confirm we will have enough time
-      between samples to write two bytes
+- [ ] send ADC data via UART
+- [ ] flash memory - Page Program
+    - [ ] erase SPI
+    - [ ] validate addressing
+    - [ ] page program
+        - [ ] test code in pageProgram function
+    - [ ] dual page program
+    - [ ] read/write protocol
+- [ ] timer interrupt
+- [ ] validate USB
 
 
-- [ ] drive clock low for commanding SPI, set back to high when done
-- [ ] check byte length of input
-- [ ] check SPI_TRIS 1/0 setting
+PROTOCOL
+0. start recording - initialize ADC and dual page program
+1. timer interrupt
+2. get data (ADC)
+3. send byte to SPI - can there be a time lag between bytes?

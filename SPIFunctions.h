@@ -7,12 +7,18 @@
 void initSPI2Master(void); // configure PIC to communicate with SPI
 unsigned char eraseSPIFlash(void); // erase entire chip
 void write2AllEnable(void); // set permissions to allow write to all memory addresses
+
 unsigned char sendByte2SPI(unsigned char data); // send any byte to the SPI (used in all remaining functions)
 unsigned char readID(void); // get device ID - used to debug PIC/SPI communication
+
 unsigned char write2SPI(unsigned char address[], unsigned char data); // write data to memory address
 int checkWIP(void); // check for write in progress (used in write2SPI)
+
 unsigned char readSPI(unsigned char address[]); // read memory address, return data
+
 void printStatReg(void); // print status register to LCD - used for debugging
+
+void pageProgram(unsigned char data);
 
 
 /**********************************************************/
@@ -192,4 +198,30 @@ void printStatReg(void){
     printf("\n");
 }
 
+void pageProgram(unsigned char data[]){
+    SPI_CE = 0;
+    foo = sendByte2SPI(WREN); // write enable
+    // address
+    // hard coded as zeros for now - change later?
+    unsigned char address[2];
+    address[2] = 0x00;
+    address[1] = 0x00;
+    address[0] = 0x00;
+    foo = sendByte2SPI(address[0]);
+    foo = sendByte2SPI(address[1]);
+    foo = sendByte2SPI(address[2]);
+
+    int i;
+    for (i=0;i<sizeof(data),i++){
+        foo = sendByte2SPI(data[i]);
+    }
+    
+    //// for time lag
+    //int tester;
+    //for (i=0;i<sizeof(data),i++){
+    //  foo = sendByte2SPI(data[i]);
+    //  for (tester=0;tester<10000;tester++){}
+    //}
+    
+}
 #endif
