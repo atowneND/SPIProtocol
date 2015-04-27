@@ -12,7 +12,7 @@
 
 #include "SDlib.h"
 #include "configbitsrev2014vC.h"
-#include "SPIConstants.h"
+#include "RegisterConstants.h"
 #include "SPIFunctions.h"
 #include "A2DFunctions.h"
 

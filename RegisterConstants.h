@@ -1,7 +1,7 @@
 #ifndef SPICONSTANTS_H_
 #define SPICONSTANTS_H_
 
-// define register constants
+// define SPI register constants
 #define REG_Interrupt IEC1bits // interrupt enable register
 #define SPIEIE SPI4EIE // REG_Interrupt.SPIEIE
 #define SPIRXIE SPI4RXIE // REG_Interrupt.SPIRXIE
@@ -44,5 +44,26 @@
 #define WRDI 0x04 // write disable
 #define RDID 0x90 // read device ID
 #define JEDECRDID 0x9F // JEDEC read device ID
+
+// define A2D registers
+#define ADCREG_PCFG AD1PCFG // analog input
+#define ADCREG_Control1 AD1CON1bits // A2D control register
+#define ADCREG_Control2 AD1CON2bits // A2D control register
+#define ADCREG_Control3 AD1CON3bits // A2D control register
+#define ADCREG_CHS AD1CHSbits // A2D channel
+#define ADCREG_Buffer ADC1BUF0 // ADC output
+
+// define Timer registers
+#define TREG_Control T2CONbits // timer control register
+#define TREG TMR2 // timer register
+#define TREG_PR PR2 // timer period register
+#define TREG_Interrupt IEC0bits // interrupt enable register
+#define TIE T2IE // interrupt enable for timer 2
+#define TREG_Flag IFS0bits // interrupt flag register
+#define TIF T2IF // TREG_Flag.TIF = IFS0bits.T2IF
+#define TREG_Control_SET T2CONSET // start timer
+
+// define Interrupt vector
+#define _SAMPLE_TIMER_VECTOR 8
 
 #endif
