@@ -1,5 +1,5 @@
-#ifndef SPICONSTANTS_H_
-#define SPICONSTANTS_H_
+#ifndef REGCONSTANTS_H_
+#define REGCONSTANTS_H_
 
 // define SPI register constants
 #define REG_Interrupt IEC1bits // interrupt enable register
@@ -65,5 +65,8 @@
 
 // define Interrupt vector
 #define _SAMPLE_TIMER_VECTOR 8
+#define INTERRUPT_PRIORITY IPC2bits.T2IP
+#define INTERRUPT_SUBPRIORITY IPC2bits.T2IS
+#define timerIPL IPL6AUTO
 
 #endif

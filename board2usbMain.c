@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <sys/attribs.h>
 
 #include "SDlib.h"
 #include "configbitsrev2014vC.h"
@@ -30,10 +31,6 @@ int xmitText(void);
 void setLCDdefaults(void);
 
 int main(void) {
-    TRISE = 0;
-    // trigger
-    LATE = 255;
-    LATE = 0;
     xmitTest();
     setLCDdefaults();
     timer_init(10);

@@ -24,7 +24,7 @@
 #pragma config FPLLMUL = MUL_20 // PLL multiplier  ( 4x20 = 80)
 #pragma config FPLLODIV = DIV_1 // PLL output divider
 //#pragma config FPBDIV = DIV_8 // Peripheral bus clock divider 10 mhz
-#pragma config FPBDIV = DIV_2 // Peripheral bus clock divider
+#pragma config FPBDIV = DIV_2 // Peripheral bus clock divider 40 mhz
 #pragma config FSOSCEN = OFF // Secondary oscillator enable
 /* Clock control settings
 */
