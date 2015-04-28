@@ -15,6 +15,7 @@
 #include "RegisterConstants.h"
 #include "SPIFunctions.h"
 #include "A2DFunctions.h"
+#include "Timer.h"
 
 /*
  *
@@ -35,6 +36,7 @@ int main(void) {
     LATE = 0;
     xmitTest();
     setLCDdefaults();
+    timer_init(10);
     // initialize and print output
     initSPI2Master();
     write2AllEnable();

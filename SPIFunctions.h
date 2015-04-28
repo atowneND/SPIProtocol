@@ -18,7 +18,7 @@ unsigned char readSPI(unsigned char address[]); // read memory address, return d
 
 void printStatReg(void); // print status register to LCD - used for debugging
 
-void pageProgram(unsigned char data);
+void pageProgram(unsigned char data[]);
 
 
 /**********************************************************/
@@ -200,7 +200,7 @@ void printStatReg(void){
 
 void pageProgram(unsigned char data[]){
     SPI_CE = 0;
-    foo = sendByte2SPI(WREN); // write enable
+    int foo = sendByte2SPI(WREN); // write enable
     // address
     // hard coded as zeros for now - change later?
     unsigned char address[2];
@@ -212,7 +212,7 @@ void pageProgram(unsigned char data[]){
     foo = sendByte2SPI(address[2]);
 
     int i;
-    for (i=0;i<sizeof(data),i++){
+    for (i=0;i<sizeof(data);i++){
         foo = sendByte2SPI(data[i]);
     }
     
