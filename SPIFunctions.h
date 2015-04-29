@@ -33,7 +33,7 @@ void initSPI2Master(void){
     SPIREG_Buffer = 0; // clear buffer
 
     // interrupt settings
-    REG_Flag.SPIEIF = 1; // (bit 8) clear error flag
+    REG_Flag.SPIEIF = 0; // (bit 8) clear error flag
     REG_Flag.SPIRXIF = 0; // (bit 9) clear receive flag
     REG_Flag.SPITXIF = 0; // (bit 10) clear transmit flag
     

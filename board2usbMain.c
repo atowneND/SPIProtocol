@@ -10,6 +10,7 @@
 #include <string.h>
 #include <math.h>
 #include <sys/attribs.h>
+#include <cp0defs.h>
 
 #include "SDlib.h"
 #include "configbitsrev2014vC.h"
@@ -31,7 +32,15 @@ int xmitText(void);
 void setLCDdefaults(void);
 
 int main(void) {
+    int bar = 255;
+//    bar = _CP0_GET_STATUS();
+    //_CP0_SET_STATUS(bar|0x00000001);
+    asm volatile("ei");
+    TRISE = 0;
+    LATE = bar;
+    //while(1){}
     xmitTest();
+    //bar = _CP0_GET_STATUS();
     setLCDdefaults();
     timer_init(10);
     // initialize and print output
