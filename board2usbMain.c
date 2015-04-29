@@ -33,20 +33,18 @@ void setLCDdefaults(void);
 
 int main(void) {
     int bar = 255;
-//    bar = _CP0_GET_STATUS();
-    //_CP0_SET_STATUS(bar|0x00000001);
+
     asm volatile("ei");
+    INTCONbits.MVEC = 1;
     TRISE = 0;
     LATE = bar;
-    //while(1){}
     xmitTest();
-    //bar = _CP0_GET_STATUS();
     setLCDdefaults();
     timer_init(10);
-    // initialize and print output
-    initSPI2Master();
-    write2AllEnable();
-
+    
+//    initSPI2Master();
+//    write2AllEnable();
+    while(1){}
     // high while erasing
     unsigned char foo;
     //foo = eraseSPIFlash(); // erase all
@@ -193,3 +191,5 @@ void putu6(char output){
         }
     }
 }
+
+
