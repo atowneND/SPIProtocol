@@ -15,3 +15,7 @@ PROTOCOL
 1. timer interrupt
 2. get data (ADC)
 3. send byte to SPI - can there be a time lag between bytes?
+
+
+refactor SPI to be interrupt-driven
+timer counter doesn't change speed

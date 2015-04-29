@@ -41,17 +41,18 @@ int main(void) {
     xmitTest();
     setLCDdefaults();
     timer_init(10);
-    while(1){}
-    initSPI2Master();
-    write2AllEnable();
     
+    initSPI2Master();
+    printStatReg();
+    write2AllEnable();
+
     // high while erasing
     unsigned char foo;
     //foo = eraseSPIFlash(); // erase all
     
     // read device ID
     foo = readID();
-    
+  
     // read status register 
     printStatReg();
 
@@ -63,7 +64,8 @@ int main(void) {
     foo = write2SPI(address,data);
     foo = readSPI(address);
     printf("foo=%c\n",foo);
-
+    printf("\nfoo=%i\n",foo);
+    while(1){}  
     
     //////////////////////////////////////////////////
     //TESTING A2D//
