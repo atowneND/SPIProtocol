@@ -19,3 +19,32 @@ PROTOCOL
 
 refactor SPI to be interrupt-driven
 timer counter doesn't change speed
+
+
+record
+->init timer
+->init ADC
+->init SPI
+    ->check length and determine number of pages
+    ->init counter
+timer
+->ADC sample
+->ADC conv
+->send byte to SPI
+counter
+->256
+    ->re-init SPI with new page address
+->EOF
+    ->close counter
+    ->close ADC
+    ->close SPI
+EOF (counter)
+->update page table
+->send data to computer
+USB
+->read SPI to buffer
+->send buffer to USB
+->repeat until EOF
+EOF (usb)
+->repeat from USB forward for second track?
+->erase SPI
