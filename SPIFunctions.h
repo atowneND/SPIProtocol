@@ -60,9 +60,9 @@ void initSPI2Master(void){
     REG_JTAG = 0; // disable JTAG on B10, B11, B12
 
     // enable interrupts
-//    REG_Interrupt.SPIEIE = 1;
-//    REG_Interrupt.SPIRXIE = 1;
-//    REG_Interrupt.SPITXIE = 1;
+    REG_Interrupt.SPIEIE = 1;
+    //REG_Interrupt.SPIRXIE = 1;
+    //REG_Interrupt.SPITXIE = 1;
     
     SPI_TRIS = 0; // set I/O
     TRISFbits.TRISF4 = 1;
@@ -229,10 +229,20 @@ void pageProgram(unsigned char data[]){
 //void __ISR(_SPI_Error_Vector,SPI_Error_PL) SPI_ERROR_ISR(void)
 void __ISR(32,IPL3AUTO) SPI_ERROR_ISR(void)
 {
+    // test which interrupt is immediately tripped
+    if (REG_Flag.SPIEIF){
+        LATE = 0b11001100;
+    }
+    else if(REG_Flag.SPIRXIF){
+        LATE = 0b10101010;
+    }
+    else if(REG_Flag.SPITXIF){
+        LATE = 0b11011011;
+    }
     REG_Flag.SPIEIF = 0;
     REG_Flag.SPIRXIF = 0;
     REG_Flag.SPITXIF = 0;
-    LATE = 0;
+    //LATE = 0;
 }
 
 /*void __ISR(_SPI_RX_Vector,SPI_RX_PL) SPI_RX_ISR(void)
