@@ -10,14 +10,14 @@ int Nctr = 0xFFFF;
 // define functions
 void timer_init(int length){
     TREG_Interrupt.TIE = 1;
-    T2CON = 0;
+    TREG_Control = 0;
 
     // from Gavin's code
-    TREG_Control.ON = 1; // turn on timer
+    TREG_Controlbits.ON = 1; // turn on timer
     // set prescale to 256
-    TREG_Control.TCKPS0 = 1;
-    TREG_Control.TCKPS1 = 1;
-    TREG_Control.TCKPS2 = 1;
+    TREG_Controlbits.TCKPS0 = 1;
+    TREG_Controlbits.TCKPS1 = 1;
+    TREG_Controlbits.TCKPS2 = 1;
     INTERRUPT_PRIORITY = 6;
     //INTERRUPT_SUBPRIORITY = 6;
     TREG = 0x0; // clear timer register

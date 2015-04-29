@@ -29,7 +29,8 @@ void initSPI2Master(void){
     REG_Interrupt.SPIEIE = 0; // (bit 8) disable error interrupt
     REG_Interrupt.SPIRXIE = 0; // (bit 9) disable receive interrupt
     REG_Interrupt.SPITXIE = 0; // (bit 10) disable transmit interrupt
-    SPIREG_Control.ON = 0; // turn     //unsigned char foo = sendByte2SPI(RDID);SPI off
+    SPIREG_Controlbits.ON = 0; // turn     //unsigned char foo = sendByte2SPI(RDID);SPI off
+    SPIREG_Control = 0; // reset everything
     SPIREG_Buffer = 0; // clear buffer
 
     // interrupt settings
@@ -44,12 +45,12 @@ void initSPI2Master(void){
     SPIREG_Baud_Rate = 255; // set BRG
         // pb clock is now 10MHz -> 5MHz baud rate
     SPIREG_Status.SPIROV = 0; // clear overflow
-    SPIREG_Control.MSTEN = 1; // set to master
+    SPIREG_Controlbits.MSTEN = 1; // set to master
 
     // settings - data changes on clock's falling edge, takes data from rising edge
-    SPIREG_Control.CKE = 1; // data changes on clock edge from active to idle
-    SPIREG_Control.CKP = 0; // clock is active high
-    SPIREG_Control.SMP = 0; // take data in middle of cycle
+    SPIREG_Controlbits.CKE = 1; // data changes on clock edge from active to idle
+    SPIREG_Controlbits.CKP = 0; // clock is active high
+    SPIREG_Controlbits.SMP = 0; // take data in middle of cycle
     SPI_HOLD = 1;
     SPI_WP = 0; // set write protect to allow WRSR
 
@@ -69,7 +70,7 @@ void initSPI2Master(void){
     SPI_CE = 1; // don't talk to the SPI right now
     
     // enable SPI operation
-    SPIREG_Control.ON = 1;
+    SPIREG_Controlbits.ON = 1;
 }
 
 unsigned char eraseSPIFlash(void){

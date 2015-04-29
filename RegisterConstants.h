@@ -15,7 +15,8 @@
 #define REG_IPC IPC8bits // interrupt priority register
 #define SPI_Priority SPI4IP // REG_IPC.SPI_Priority
 
-#define SPIREG_Control SPI4CONbits // spi control register
+#define SPIREG_Controlbits SPI4CONbits // spi control register
+#define SPIREG_Control SPI4CON
 #define SPIREG_Baud_Rate SPI4BRG // spi baud rate generator
 #define SPIREG_Status SPI4STATbits // spi status register
 #define SPIREG_Buffer SPI4BUF // spi buffer register
@@ -54,7 +55,8 @@
 #define ADCREG_Buffer ADC1BUF0 // ADC output
 
 // define Timer registers
-#define TREG_Control T2CONbits // timer control register
+#define TREG_Controlbits T2CONbits // timer control register
+#define TREG_Control T2CON
 #define TREG TMR2 // timer register
 #define TREG_PR PR2 // timer period register
 #define TREG_Interrupt IEC0bits // interrupt enable register

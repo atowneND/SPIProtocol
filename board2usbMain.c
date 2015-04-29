@@ -41,10 +41,10 @@ int main(void) {
     xmitTest();
     setLCDdefaults();
     timer_init(10);
-    
-//    initSPI2Master();
-//    write2AllEnable();
     while(1){}
+    initSPI2Master();
+    write2AllEnable();
+    
     // high while erasing
     unsigned char foo;
     //foo = eraseSPIFlash(); // erase all
@@ -191,5 +191,3 @@ void putu6(char output){
         }
     }
 }
-
-
