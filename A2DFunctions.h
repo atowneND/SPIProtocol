@@ -5,8 +5,8 @@
 // declare functions
 void init_ADC(); // initialize A2D settings
 void conv();
-unsigned int conv1();
-unsigned int conv2();
+void conv1();
+void conv2();
 
 /**********************************************************/
 // define functions
@@ -41,13 +41,9 @@ void conv()
     delay_us(1); //Delay
     LATD = 0;
     ADCREG_Control1.SAMP = 0;       //Terminate sampling
-//    while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
-//    output = ADCREG_Buffer;          //Get ADC result
-
-//    return output;
 }
 
-unsigned int conv1()
+void conv1()
 {
     // A2D_F 
     unsigned int output; 
@@ -56,13 +52,9 @@ unsigned int conv1()
     delay_us(1);                //Delay
     ADCREG_Control1.SAMP = 0;       //Terminate sampling
       LATD = 1;
-    /*while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
-        LATD = 0;
-    output = ADCREG_Buffer;          //Get ADC result*/
-    return output;
 }
 
-unsigned int conv2()
+void conv2()
 {
     // A2D_UF
     unsigned int output;
@@ -71,10 +63,6 @@ unsigned int conv2()
     delay_us(1);                //Delay
     ADCREG_Control1.SAMP = 0;       //Terminate sampling
       LATD = 1;
-    while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
-        LATD = 0;
-    output = ADCREG_Buffer;          //Get ADC result
-    return output;
 }
 
 void __ISR(_ADC_VECTOR,adcIPL) ADC_ISR(void)

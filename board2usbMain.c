@@ -47,7 +47,7 @@ int main(void) {
     unsigned int inval = 0x4145;
     init_ADC();
     int ctr = 0;
-    int maxnum = 1;
+    int maxnum = 100;
     unsigned int arrval[maxnum];
     while(ctr<maxnum){
         conv();
@@ -57,8 +57,8 @@ int main(void) {
     }
     conv();
     //arrval[ctr+1]=inval;
-    asm volatile("di");
-    LATE = 0xF0;
+    //asm volatile("di");
+    //LATE = 0xF0;
 
     
     return (EXIT_SUCCESS);
