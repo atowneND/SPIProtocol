@@ -73,57 +73,12 @@ void setLCDdefaults(void){
 
 int xmitTest(void){
     // initialize strings
-    char* myname;
-    myname = "Ashley Towne";
     serial_init(9600);
-
-    // initialize LCD
-    LCD_init();
-    LCD_display_on();
-    set_output_device(2); // select LCD as output
-
-    // output to LCD
-    LCD_clear();
-    LCD_setpos(0,0);
-    printf("%s",myname);
-    LCD_setpos(1,0);
 
     // output to terminal
     set_output_device(1); // select UART as output device
-    printf("This goes to terminal\n"); // write to the screen
-    printf("%s\n", myname);
-    // loop
-    int foo = 0;
-    unsigned char mystr;
-    int ctr = 0;
-    while(ctr<10)
-    {
-        ctr = ctr + 1;
-        if (foo==0){mystr='0';}
-        else if(foo==1){mystr = '1';}
-        else if(foo==2){mystr = '2';}
-        else if(foo==3){mystr = '3';}
-        else if(foo==4){mystr = '4';}
-        else if(foo==5){mystr = '5';}
-        else if(foo==6){mystr = '6';}
-        else if(foo==7){mystr = '7';}
-        else if(foo==8){mystr = '8';}
-        else if(foo==9){
-            mystr = '9';
-            foo = -1;
-        }
-
-        set_output_device(2);
-        putu((char)(100+foo));
-        set_output_device(1);
-        LCD_char((char)(100+foo));
-
-        foo = foo + 1;
-    }
-
-    putu('z');
-    LCD_char('z');
-    putu(EOF);
+    printf("START\n"); // write to the screen
+    printf("eof = %u\n",EOF); // 0xFFFFFFFF (4 bytes)
     return 1;
 }
 
