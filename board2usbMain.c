@@ -34,8 +34,8 @@ void setLCDdefaults(void);
 int main(void) {
     int bar = 255;
 
-    asm volatile("ei");
-    INTCONbits.MVEC = 1;
+//    asm volatile("ei");
+//    INTCONbits.MVEC = 1;
     TRISE = 0;
     LATE = bar;
     xmitTest();
