@@ -41,48 +41,25 @@ int main(void) {
     xmitTest();
     setLCDdefaults();
     timer_init(10);
-    while(1){}
-    initSPI2Master();
-    write2AllEnable();
-    
-    // high while erasing
-    unsigned char foo;
-    //foo = eraseSPIFlash(); // erase all
-    
-    // read device ID
-    foo = readID();
-    
-    // read status register 
-    printStatReg();
-
-    unsigned char address[2];
-    address[0] = 0x00;address[1]=0x00;address[2]=0x00;
-    unsigned char data = 'B';
-    
-    // write and read
-    foo = write2SPI(address,data);
-    foo = readSPI(address);
-    printf("foo=%c\n",foo);
-
     
     //////////////////////////////////////////////////
     //TESTING A2D//
     unsigned int inval = 0x4145;
     init_ADC();
-    int temp = 0;
-    int adctr;
-    unsigned char V;
- 
-    while(1){
+    int ctr = 0;
+    int maxnum = 1;
+    unsigned int arrval[maxnum];
+    while(ctr<maxnum){
         inval = conv();
-        for (adctr=0;adctr<8;adctr++){
-            temp = (inval>>adctr)&1;
-            V |= temp << adctr;
-        }
-
-        printf("inval = %i\tV = %c",inval,V);
-        break;
+        arrval[ctr] = inval;
+        printf("%i",inval);
+        ctr++;
     }
+    printf("here");
+    inval = conv();
+    arrval[ctr+1]=inval;
+    asm volatile("di");
+    LATE = 0xF0;
 
     return (EXIT_SUCCESS);
 }
