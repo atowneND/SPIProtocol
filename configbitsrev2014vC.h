@@ -18,11 +18,11 @@
 
  */
 
-#pragma config FNOSC = PRIPLL // Oscillator selection
-#pragma config POSCMOD = HS // Primary oscillator mode
-#pragma config FPLLIDIV = DIV_5 // PLL input divider (20 -> 4)
+#pragma config FNOSC = FRCPLL // Oscillator selection
+#pragma config POSCMOD = OFF // Primary oscillator mode
+#pragma config FPLLIDIV = DIV_2 // PLL input divider (8 -> 4)
 #pragma config FPLLMUL = MUL_20 // PLL multiplier  ( 4x20 = 80)
-#pragma config FPLLODIV = DIV_1 // PLL output divider
+#pragma config FPLLODIV = DIV_1 // PLL output divider (80 MHz system clock)
 //#pragma config FPBDIV = DIV_8 // Peripheral bus clock divider 10 mhz
 #pragma config FPBDIV = DIV_2 // Peripheral bus clock divider 40 mhz
 #pragma config FSOSCEN = OFF // Secondary oscillator enable
@@ -47,4 +47,3 @@
 
 #pragma config	ICESEL	= ICS_PGx1	// ICE pin selection
 #endif	/* CONFIGBITS_H */
-
