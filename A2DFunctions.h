@@ -14,7 +14,6 @@ void conv2();
 void init_ADC()
 {
     ADCREG_PCFG = 0;            //Set pins to analog input - DOUBLE CHECK PGD & PGC
-    //ADCREG_PCFG = 0x00C0;     //Set AN6 & AN7 to analog - all others are digital, including PGD & PGC
     ADCREG_Control1.ADON = 0;   //Turn off ADC
     ADCREG_Control1.FORM = 0;   //Unsigned integer format
     ADCREG_Control1.SSRC = 0;   //Convert when SAMP is cleared
@@ -25,8 +24,11 @@ void init_ADC()
     ADCREG_Control2.ALTS = 0;   //Always use MUX A
     ADCREG_Control3.ADRC = 0;   //Use PBClock as Clock Source
     ADCREG_Control3.ADCS = 0;   //for speed
-    ADCREG_Control1.ADON = 1;   //Turn on ADC
     ADC_PRIORITY = 5;
+}
+
+void start_ADC(){
+    ADCREG_Control1.ADON = 1;   //Turn on ADC
     ADC_Interrupt = 0;          // clear ADC flag
     ADC_IE = 1;                 // enable interrupt
 }

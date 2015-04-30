@@ -44,6 +44,7 @@ int main(void) {
     unsigned int inval = 0x4145;
     // ADC must be initialized before timer
     init_ADC();
+    start_ADC();
     timer_init();
     timer_enable(10);
 
