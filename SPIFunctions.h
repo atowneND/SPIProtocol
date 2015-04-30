@@ -61,8 +61,8 @@ void initSPI2Master(void){
 
     // enable interrupts
     REG_Interrupt.SPIEIE = 1;
-    //REG_Interrupt.SPIRXIE = 1;
-    //REG_Interrupt.SPITXIE = 1;
+    REG_Interrupt.SPIRXIE = 1;
+    REG_Interrupt.SPITXIE = 1;
     
     SPI_TRIS = 0; // set I/O
     TRISFbits.TRISF4 = 1;
@@ -105,16 +105,25 @@ void write2AllEnable(void){
     SPI_CE = 1;
 }
 
+
 unsigned char sendByte2SPI(unsigned char data){
 // sends a single command to SPI - back end
 // waits for transmit buffer to be empty, sends data, waits for flag, waits for
 // return value (buffer register)
+    REG_Interrupt.SPIEIE = 0;
+    REG_Interrupt.SPIRXIE = 0;
+    REG_Interrupt.SPITXIE = 0;
     unsigned char regstat;
+
+    // get rid of this and check in ADC done ISR
     while(!SPIREG_Status.SPITBE); // active wait if transmit buffer is not empty
     SPIREG_Buffer = data; // write data to buffer
 
+    // replace this with an interrupt - basically delete it
     while(!REG_Flag.SPIRXIF); // while the interrupt flag does not signal done
     REG_Flag.SPIRXIF = 0; // clear flag
+
+    // put this in the interrupt
     while(!SPIREG_Status.SPIRBF); // wait for buffer to be full
     regstat = SPIREG_Buffer; // return buffer register
 
@@ -242,6 +251,9 @@ void __ISR(32,IPL3AUTO) SPI_ERROR_ISR(void)
     REG_Flag.SPIEIF = 0;
     REG_Flag.SPIRXIF = 0;
     REG_Flag.SPITXIF = 0;
+    REG_Interrupt.SPIEIE = 0;
+    REG_Interrupt.SPIRXIE = 0;
+    REG_Interrupt.SPITXIE = 0;
     //LATE = 0;
 }
 
