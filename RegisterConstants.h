@@ -1,6 +1,39 @@
 #ifndef REGCONSTANTS_H_
 #define REGCONSTANTS_H_
 
+// define A2D registers
+#define ADCREG_PCFG AD1PCFG // analog input
+#define ADCREG_Control1 AD1CON1bits // A2D control register
+#define ADCREG_Control2 AD1CON2bits // A2D control register
+#define ADCREG_Control3 AD1CON3bits // A2D control register
+#define ADCREG_CHS AD1CHSbits // A2D channel
+#define ADCREG_Buffer ADC1BUF0 // ADC output
+#define ADC_Interrupt IFS1bits.AD1IF // ADC1 convert done flag
+#define ADC_IE IEC1bits.AD1IE
+
+// define A2D interrupts
+#define _ADC_VECTOR 27 // ADC1 convert done vector
+#define ADC_PRIORITY IPC6bits.AD1IP // ADC1 convert done priority
+#define ADC_SUBPRIORITY IPC6bits.AD1IS // ADC1 convert done priority
+#define adcIPL IPL5AUTO
+
+// define Timer registers
+#define TREG_Controlbits T2CONbits // timer control register
+#define TREG_Control T2CON
+#define TREG TMR2 // timer register
+#define TREG_PR PR2 // timer period register
+#define TREG_Interrupt IEC0bits // interrupt enable register
+#define TIE T2IE // interrupt enable for timer 2
+#define TREG_Flag IFS0bits // interrupt flag register
+#define TIF T2IF // TREG_Flag.TIF = IFS0bits.T2IF
+#define TREG_Control_SET T2CONSET // start timer
+
+// define timer interrupt
+#define _SAMPLE_TIMER_VECTOR 8
+#define INTERRUPT_PRIORITY IPC2bits.T2IP
+#define INTERRUPT_SUBPRIORITY IPC2bits.T2IS
+#define timerIPL IPL6AUTO
+
 // define SPI register constants
 #define REG_Interrupt IEC1bits // interrupt enable register
 #define SPIEIE SPI4EIE // REG_Interrupt.SPIEIE
@@ -49,30 +82,5 @@
 // SPI interrupt stuff
 #define _SPI_Interrupt_Vector 32
 #define SPI_PL IPL3AUTO
-
-// define A2D registers
-#define ADCREG_PCFG AD1PCFG // analog input
-#define ADCREG_Control1 AD1CON1bits // A2D control register
-#define ADCREG_Control2 AD1CON2bits // A2D control register
-#define ADCREG_Control3 AD1CON3bits // A2D control register
-#define ADCREG_CHS AD1CHSbits // A2D channel
-#define ADCREG_Buffer ADC1BUF0 // ADC output
-
-// define Timer registers
-#define TREG_Controlbits T2CONbits // timer control register
-#define TREG_Control T2CON
-#define TREG TMR2 // timer register
-#define TREG_PR PR2 // timer period register
-#define TREG_Interrupt IEC0bits // interrupt enable register
-#define TIE T2IE // interrupt enable for timer 2
-#define TREG_Flag IFS0bits // interrupt flag register
-#define TIF T2IF // TREG_Flag.TIF = IFS0bits.T2IF
-#define TREG_Control_SET T2CONSET // start timer
-
-// define Interrupt vector
-#define _SAMPLE_TIMER_VECTOR 8
-#define INTERRUPT_PRIORITY IPC2bits.T2IP
-#define INTERRUPT_SUBPRIORITY IPC2bits.T2IS
-#define timerIPL IPL6AUTO
 
 #endif

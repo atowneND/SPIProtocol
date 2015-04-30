@@ -4,7 +4,7 @@
 /**********************************************************/
 // declare functions
 void init_ADC(); // initialize A2D settings
-unsigned int conv();
+void conv();
 unsigned int conv1();
 unsigned int conv2();
 
@@ -18,6 +18,7 @@ void init_ADC()
     ADCREG_Control1.ADON = 0;   //Turn off ADC
     ADCREG_Control1.FORM = 0;   //Unsigned integer format
     ADCREG_Control1.SSRC = 0;   //Convert when SAMP is cleared
+    ADCREG_Control2.SMPI = 0;   // set interrupt to occur after every conversion
     ADCREG_Control2.VCFG = 0;   //Use AVDD and AVSS as Voltage Reference
     ADCREG_Control2.CSCNA = 0;  //Do not scan
     ADCREG_Control2.BUFM = 0;   //One 16-word buffer
@@ -25,9 +26,12 @@ void init_ADC()
     ADCREG_Control3.ADRC = 0;   //Use PBClock as Clock Source
     ADCREG_Control3.ADCS = 0;   //for speed
     ADCREG_Control1.ADON = 1;   //Turn on ADC
+    ADC_PRIORITY = 5;
+    ADC_Interrupt = 0;          // clear ADC flag
+    ADC_IE = 1;                 // enable interrupt
 }
 
-unsigned int conv()
+void conv()
 {
     // A2D_F
     unsigned int output;
@@ -37,10 +41,10 @@ unsigned int conv()
     delay_us(1); //Delay
     LATD = 0;
     ADCREG_Control1.SAMP = 0;       //Terminate sampling
-    while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
-    output = ADCREG_Buffer;          //Get ADC result
+//    while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
+//    output = ADCREG_Buffer;          //Get ADC result
 
-    return output;
+//    return output;
 }
 
 unsigned int conv1()
@@ -57,15 +61,7 @@ unsigned int conv1()
     output = ADCREG_Buffer;          //Get ADC result*/
     return output;
 }
-/*void __ISR(_A2D_Vector,A2D_PL) A2D_ISR(void)
-{
-    unsigned int output;
-    output = ADCREG_Buffer;
-    ADC_Interrupt = 0;
-    
-    write2SPI(address,output);
-    LATE = 0;
-}*/
+
 unsigned int conv2()
 {
     // A2D_UF
@@ -79,5 +75,18 @@ unsigned int conv2()
         LATD = 0;
     output = ADCREG_Buffer;          //Get ADC result
     return output;
+}
+
+void __ISR(_ADC_VECTOR,adcIPL) ADC_ISR(void)
+{
+    unsigned int output;
+    if (!ADCREG_Control1.DONE){
+        printf("ERROR\n");
+        while(!ADCREG_Control1.DONE);
+    }
+    output = ADCREG_Buffer;
+    printf("%i\n",output);
+    ADC_Interrupt = 0;
+    LATE = 0;
 }
 #endif

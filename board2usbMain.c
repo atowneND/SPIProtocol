@@ -50,14 +50,13 @@ int main(void) {
     int maxnum = 1;
     unsigned int arrval[maxnum];
     while(ctr<maxnum){
-        inval = conv();
-        arrval[ctr] = inval;
-        printf("%i",inval);
+        conv();
+        //arrval[ctr] = inval;
+        //printf("%i\n",inval);
         ctr++;
     }
-    printf("here");
-    inval = conv();
-    arrval[ctr+1]=inval;
+    conv();
+    //arrval[ctr+1]=inval;
     asm volatile("di");
     LATE = 0xF0;
 
