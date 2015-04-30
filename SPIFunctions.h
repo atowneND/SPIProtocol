@@ -33,7 +33,7 @@ void initSPI2Master(void){
     SPIREG_Control = 0; // reset everything
     SPIREG_Buffer = 0; // clear buffer
 
-    // interrupt settings
+    // interrupt settings - clear all of them
     REG_Flag.SPITXIF = 0;
     REG_Flag.SPIEIF = 0;
     REG_Flag.SPIRXIF = 0; // (bit 9) clear receive flag
@@ -59,7 +59,7 @@ void initSPI2Master(void){
         // needs to account for ADC (B:8,10,11,14 need to be digital)
     REG_JTAG = 0; // disable JTAG on B10, B11, B12
 
-    // enable interrupts
+    // enable interrupts - disable tx interrupt as it is useless in this code
     REG_Interrupt.SPIRXIE = 1;
     REG_Interrupt.SPITXIE = 0;
     REG_Interrupt.SPIEIE = 1;
@@ -117,42 +117,11 @@ unsigned char sendByte2SPI(unsigned char data){
     while(!SPIREG_Status.SPITBE); // active wait if transmit buffer is not empty
     SPIREG_Buffer = data; // write data to buffer
 
-    // replace this with an interrupt - basically delete it
-//    while(!REG_Flag.SPIRXIF); // while the interrupt flag does not signal done
-//    REG_Flag.SPIRXIF = 0; // clear flag
-
-    // put this in the interrupt
+    // this should occur after all interrupts have been tripped
     while(!SPIREG_Status.SPIRBF); // wait for buffer to be full
     regstat = SPIREG_Buffer; // return buffer register
 
     return regstat;
-}
-
-//void __ISR(_SPI_Error_Vector,SPI_Error_PL) SPI_ERROR_ISR(void)
-void __ISR(32,IPL3AUTO) SPI_RX_ISR(void)
-{
-    // test which interrupt is immediately tripped
-    if(REG_Flag.SPIRXIF){
-        LATE = 0b10101010;
-        printf("rx\n");
-    }
-    else if(REG_Flag.SPITXIF){
-        printf("tx\n");
-    }
-    else if(REG_Flag.SPIEIF){
-        printf("error\n");
-    }
-    
-    printf("here\n");
-
-    while(!SPIREG_Status.SPIRBF);
-    REG_Flag.SPIRXIF = 0;
-    REG_Flag.SPITXIF = 0;
-    REG_Flag.SPIEIF = 0;
-    REG_Interrupt.SPIRXIE = 0;
-    REG_Interrupt.SPITXIE = 0;
-    REG_Interrupt.SPIEIE = 0;
-    //LATE = 0;
 }
 
 unsigned char readID(void){
@@ -260,5 +229,33 @@ void pageProgram(unsigned char data[]){
     
 }
 
+
+/**********************************************************/
+// declare ISR
+void __ISR(_SPI_Interrupt_Vector,SPI_PL) SPI_RX_ISR(void)
+{
+    // test which interrupt is immediately tripped
+//    if(REG_Flag.SPIRXIF){
+//        LATE = 0b10101010;
+//        printf("rx\n");
+//    }
+//    else if(REG_Flag.SPITXIF){
+//        printf("tx\n");
+//    }
+//    else if(REG_Flag.SPIEIF){
+//        printf("error\n");
+//    }
+    
+//    printf("here\n");
+
+    while(!SPIREG_Status.SPIRBF);
+    REG_Flag.SPIRXIF = 0;
+//    REG_Flag.SPITXIF = 0;
+    REG_Flag.SPIEIF = 0;
+    REG_Interrupt.SPIRXIE = 0;
+//    REG_Interrupt.SPITXIE = 0;
+    REG_Interrupt.SPIEIE = 0;
+    //LATE = 0;
+}
 
 #endif

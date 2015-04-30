@@ -46,6 +46,10 @@
 #define RDID 0x90 // read device ID
 #define JEDECRDID 0x9F // JEDEC read device ID
 
+// SPI interrupt stuff
+#define _SPI_Interrupt_Vector 32
+#define SPI_PL IPL3AUTO
+
 // define A2D registers
 #define ADCREG_PCFG AD1PCFG // analog input
 #define ADCREG_Control1 AD1CON1bits // A2D control register
