@@ -52,12 +52,20 @@ unsigned int conv1()
     delay_us(1);                //Delay
     ADCREG_Control1.SAMP = 0;       //Terminate sampling
       LATD = 1;
-    while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
+    /*while(!ADCREG_Control1.DONE);   //Wait for conversion to complete
         LATD = 0;
-    output = ADCREG_Buffer;          //Get ADC result
+    output = ADCREG_Buffer;          //Get ADC result*/
     return output;
 }
-
+/*void __ISR(_A2D_Vector,A2D_PL) A2D_ISR(void)
+{
+    unsigned int output;
+    output = ADCREG_Buffer;
+    ADC_Interrupt = 0;
+    
+    write2SPI(address,output);
+    LATE = 0;
+}*/
 unsigned int conv2()
 {
     // A2D_UF
