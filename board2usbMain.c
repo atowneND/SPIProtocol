@@ -30,6 +30,7 @@ void putu6(char output);
 // transmit test - proof of concept
 int xmitText(void);
 void setLCDdefaults(void);
+void initAll(void);
 
 int main(void) {
     int bar = 255;
@@ -38,19 +39,28 @@ int main(void) {
     INTCONbits.MVEC = 1;
     TRISE = 0;
     LATE = bar;
-    xmitTest();
+    //xmitTest();
+    initAll();
     
     //////////////////////////////////////////////////
-    unsigned int inval = 0x4145;
-    // ADC must be initialized before timer
-    init_ADC();
-    start_ADC();
-    timer_init();
+    enable_ADC();
     timer_enable(10);
 
 
     
     return (EXIT_SUCCESS);
+}
+
+void initAll(void){
+    // initialize USB
+    serial_init(9600);
+    set_output_device(1); // select USB as output device
+    
+    // initialize timer
+    timer_init();
+    
+    // initialize ADC
+    init_ADC();
 }
 
 void setLCDdefaults(void){

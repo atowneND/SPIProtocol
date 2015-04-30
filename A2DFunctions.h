@@ -3,10 +3,11 @@
 
 /**********************************************************/
 // declare functions
-void init_ADC(); // initialize A2D settings
-void conv();
-void conv1();
-void conv2();
+void init_ADC(void); // initialize A2D settings
+void enable_ADC(void);
+void conv(void);
+void conv1(void);
+void conv2(void);
 
 /**********************************************************/
 // define functions
@@ -27,7 +28,7 @@ void init_ADC()
     ADC_PRIORITY = 5;
 }
 
-void start_ADC(){
+void enable_ADC(){
     ADCREG_Control1.ADON = 1;   //Turn on ADC
     ADC_Interrupt = 0;          // clear ADC flag
     ADC_IE = 1;                 // enable interrupt
