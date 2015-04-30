@@ -65,15 +65,20 @@ void conv2()
       LATD = 1;
 }
 
+int isrctr = 0;
 void __ISR(_ADC_VECTOR,adcIPL) ADC_ISR(void)
 {
+    isrctr = isrctr + 1;
     unsigned int output;
     if (!ADCREG_Control1.DONE){
         printf("ERROR\n");
         while(!ADCREG_Control1.DONE);
     }
     output = ADCREG_Buffer;
-    printf("%i\n",output);
+    printf("%i: %i\n",isrctr,output);
+    if (isrctr>10){
+        ADC_IE = 0;
+    }
     ADC_Interrupt = 0;
     LATE = 0;
 }

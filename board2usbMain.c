@@ -39,26 +39,14 @@ int main(void) {
     TRISE = 0;
     LATE = bar;
     xmitTest();
-    setLCDdefaults();
-    timer_init(10);
     
     //////////////////////////////////////////////////
-    //TESTING A2D//
     unsigned int inval = 0x4145;
+    // ADC must be initialized before timer
     init_ADC();
-    int ctr = 0;
-    int maxnum = 100;
-    unsigned int arrval[maxnum];
-    while(ctr<maxnum){
-        conv();
-        //arrval[ctr] = inval;
-        //printf("%i\n",inval);
-        ctr++;
-    }
-    conv();
-    //arrval[ctr+1]=inval;
-    //asm volatile("di");
-    //LATE = 0xF0;
+    timer_init();
+    timer_enable(10);
+
 
     
     return (EXIT_SUCCESS);

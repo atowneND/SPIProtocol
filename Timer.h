@@ -3,13 +3,14 @@
 
 /**********************************************************/
 // declare functions
-void timer_init(int length);
+void timer_init(void);
+void timer_enable(int length);
 int Nctr = 0xFFFF;
     
 /**********************************************************/
 // define functions
-void timer_init(int length){
-    TREG_Interrupt.TIE = 1;
+void timer_init(void){
+    TREG_Interrupt.TIE = 0;
     TREG_Control = 0;
 
     // from Gavin's code
@@ -20,21 +21,25 @@ void timer_init(int length){
     TREG_Controlbits.TCKPS2 = 1;
     INTERRUPT_PRIORITY = 6;
     //INTERRUPT_SUBPRIORITY = 6;
+
+    //TREG_PR = 0xF710; // set period register to 10000
+   
+}
+
+void timer_enable(int length){
+    TREG_Flag.TIF = 0; // interrupt flag off
+    TREG_Interrupt.TIE = 1;
     TREG = 0x0; // clear timer register
     TREG_PR = 0xFFFF;
-    //TREG_PR = 0xF710; // set period register to 10000
     TREG_Control_SET = 0x8000; // start timer
-    TRISE = 0;
-    TREG_Flag.TIF = 0; // interrupt flag off
-    LATE = Nctr;
-    LATEbits.LATE0 = 0;
-    
+ 
 }
 
 void __ISR(_SAMPLE_TIMER_VECTOR,timerIPL) timerISR(void)
 {
     Nctr = Nctr - 1;
     LATE = Nctr;
+        conv();
     IFS0bits.T2IF = 0;
 }
 
