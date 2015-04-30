@@ -41,18 +41,17 @@ int main(void) {
     xmitTest();
     setLCDdefaults();
     timer_init(10);
-    
+    while(1){}
     initSPI2Master();
-    printStatReg();
     write2AllEnable();
-
+    
     // high while erasing
     unsigned char foo;
     //foo = eraseSPIFlash(); // erase all
     
     // read device ID
     foo = readID();
-  
+    
     // read status register 
     printStatReg();
 
@@ -64,31 +63,24 @@ int main(void) {
     foo = write2SPI(address,data);
     foo = readSPI(address);
     printf("foo=%c\n",foo);
-    printf("\nfoo=%i\n",foo);
-    while(1){}  
+
     
     //////////////////////////////////////////////////
     //TESTING A2D//
     unsigned int inval = 0x4145;
-    set_output_device(1);
-    printf("inval = %i\n\tsize = %lu\n",inval,sizeof(inval));
     init_ADC();
-    int ctr = 0;
-    address[0] = address[0] + 1;
-    char valStr[sizeof(inval)];
+    int temp = 0;
+    int adctr;
+    unsigned char V;
  
     while(1){
         inval = conv();
-        printf("%i\t",inval);
-//        for (ctr= 0; ctr<sizeof(inval); ctr++){
-//            foo = write2SPI(address,valStr[ctr]);
-//            foo = readSPI(address);
-//            printf("%i ",foo);
-//            address[0] = address[0] + 1;
-//        }
-//        printf("\n");
-        memcpy(valStr,(char*)&inval,sizeof(inval));
-        printf("valStr = %s\n",valStr);   
+        for (adctr=0;adctr<8;adctr++){
+            temp = (inval>>adctr)&1;
+            V |= temp << adctr;
+        }
+
+        printf("inval = %i\tV = %c",inval,V);
         break;
     }
 
