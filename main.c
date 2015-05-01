@@ -33,13 +33,14 @@ int main(void) {
     asm volatile("ei");
     INTCONbits.MVEC = 1;
     TRISE = 0;
-    LATE = bar;
+    LATE = 0;
     //xmitTest();
     initAll();
+    LATE = 254;
     
     //////////////////////////////////////////////////
-    //enable_ADC();
-    //timer_enable(10);
+    enable_ADC();
+    timer_enable(10);
     printf("here\n");
     putu('n');
 
