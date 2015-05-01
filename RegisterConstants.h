@@ -1,6 +1,28 @@
 #ifndef REGCONSTANTS_H_
 #define REGCONSTANTS_H_
 
+// define Button interrupts
+#define UP_IF INT2IF
+#define UP_IE INT2IE
+#define UP_Priority IPC1bits.INT1IP
+#define UP_Edge INTCONbits.INT1EP
+#define UP_Vector 42
+#define UPIPL IPL3AUTO
+
+#define DOWN_IF INT2IF
+#define DOWN_IE INT2IE
+#define DOWN_Priority IPC2bits.INT2IP
+#define DOWN_Edge INTCONbits.INT2EP
+#define DOWN_Vector 43
+#define DOWNIPL IPL2AUTO
+
+#define REC_IF INT3IF
+#define REC_IE INT3IE
+#define REC_Priority IPC3bits.INT3IP
+#define REC_Edge INTCONbits.INT3EP
+#define REC_Vector 43
+#define RECIPL IPL4AUTO
+
 // define USB registers
 #define USBMODE U6MODEbits // usb mode register
 #define USBSTA U6STAbits // usb status register
