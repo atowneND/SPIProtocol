@@ -23,18 +23,11 @@
  *
  */
 // transmit test - proof of concept
-int xmitText(void);
-void setLCDdefaults(void);
 void initAll(void);
 
 int main(void) {
     int bar = 255;
 
-    asm volatile("ei");
-    INTCONbits.MVEC = 1;
-    TRISE = 0;
-    LATE = 0;
-    //xmitTest();
     initAll();
     LATE = 254;
     
@@ -49,6 +42,14 @@ int main(void) {
 }
 
 void initAll(void){
+    // global interrupts
+    asm volatile("ei");
+    INTCONbits.MVEC = 1;
+
+    // LEDs
+    TRISE = 0;
+    LATE = 0;
+
     // initialize USB
     serial_init(9600);
     set_output_device(1); // select USB as output device
