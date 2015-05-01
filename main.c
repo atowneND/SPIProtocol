@@ -41,3 +41,17 @@ int main(void) {
     return (EXIT_SUCCESS);
 }
 
+void __ISR(UP_Vector,UPIPL) UPISR(){
+    LATE = 0b11001100;
+    TREG_Flag.UP_IF = 0;
+}
+
+void __ISR(DOWN_Vector,DOWNIPL) DOWNISR(){
+    LATE = 0b110111011;
+    TREG_Flag.DOWN_IF = 0;
+}
+
+void __ISR(REC_Vector,RECIPL) RECISR(){
+    LATE = 0xF0;
+    TREG_Flag.REC_IF = 0;
+}

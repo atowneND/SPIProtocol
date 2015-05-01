@@ -20,7 +20,7 @@
 #define REC_IE INT3IE
 #define REC_Priority IPC3bits.INT3IP
 #define REC_Edge INTCONbits.INT3EP
-#define REC_Vector 43
+#define REC_Vector 44
 #define RECIPL IPL4AUTO
 
 // define USB registers
