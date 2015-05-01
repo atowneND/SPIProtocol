@@ -38,11 +38,15 @@ int main(void) {
     initAll();
     
     //////////////////////////////////////////////////
-    //enable_ADC();
-    //timer_enable(10);
+    enable_ADC();
+    timer_enable(10);
     printf("here\n");
-    putu('n');
+//    long unsigned int sysclk = get
+    printf("sysclk: %lu\n",get_sys_clock());
+    printf("pbclk:  %lu\n",get_pb_clock());
+    printf("div_by: %lu\n",get_sys_clock()/get_pb_clock());
 
+    printf("intsize = %i\n",sizeof(int));
     
     return (EXIT_SUCCESS);
 }
@@ -57,5 +61,6 @@ void initAll(void){
     
     // initialize ADC
     init_ADC();
+
 }
 
