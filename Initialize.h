@@ -17,6 +17,9 @@ void initAll(void){
     TRISE = 0;
     LATE = 0;
 
+    // buttons
+    initButtons();
+
     // initialize USB
     serial_init(9600);
     set_output_device(1); // select USB as output device
