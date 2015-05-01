@@ -1,6 +1,13 @@
 #ifndef REGCONSTANTS_H_
 #define REGCONSTANTS_H_
 
+// define USB registers
+#define USBMODE U6MODEbits // usb mode register
+#define USBSTA U6STAbits // usb status register
+#define USBBRG U6BRG // usb baud rate generator
+#define USBRX U6RXREG // usb receive register
+#define USBTX U6TXREG // usb transmit register
+
 // define A2D registers
 #define ADCREG_PCFG AD1PCFG // analog input
 #define ADCREG_Control1 AD1CON1bits // A2D control register
@@ -28,13 +35,13 @@
 #define TIF T2IF // TREG_Flag.TIF = IFS0bits.T2IF
 #define TREG_Control_SET T2CONSET // start timer
 
-// define timer interrupt
+// define Timer interrupts
 #define _SAMPLE_TIMER_VECTOR 8
 #define INTERRUPT_PRIORITY IPC2bits.T2IP
 #define INTERRUPT_SUBPRIORITY IPC2bits.T2IS
 #define timerIPL IPL6AUTO
 
-// define SPI register constants
+// define SPI registers
 #define REG_Interrupt IEC1bits // interrupt enable register
 #define SPIEIE SPI4EIE // REG_Interrupt.SPIEIE
 #define SPIRXIE SPI4RXIE // REG_Interrupt.SPIRXIE
@@ -79,7 +86,7 @@
 #define RDID 0x90 // read device ID
 #define JEDECRDID 0x9F // JEDEC read device ID
 
-// SPI interrupt stuff
+// define SPI interrupts
 #define _SPI_Interrupt_Vector 32
 #define SPI_PL IPL3AUTO
 
