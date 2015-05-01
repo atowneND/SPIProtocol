@@ -40,7 +40,7 @@ void putu6(char output){
     {
         if(USBSTA.URXDA == 1)
         {
-            U6TXREG = output;         //Set output
+            USBTX = output;         //Set output
             b = 1;                    //Exit loop
         }
     }
